@@ -25,9 +25,11 @@ async def handler(event):
         elif re.findall(r'_a',event.message.message):
             m = await event.respond('Bot is activated! \nPlease whait 5 min')
             isActive = True
+            print('Bot is activated! \nPlease whait 5 min')
         elif re.findall(r'_d',event.message.message):
             m = await event.respond('Bot is deactivated! \nPlease whait 5 min')
             isActive = False
+            print('Bot is deactivated! \nPlease whait 5 min')
         await asyncio.sleep(5)
         await client.delete_messages(event.chat_id, [event.id, m.id])
 
