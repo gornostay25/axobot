@@ -8,7 +8,7 @@ ocr_api = str(os.sys.argv[1]) if len(os.sys.argv) > 2 else "0748b1c15b88957"
 
 isActive = False
 client = TelegramClient(
-    'axo_bot_'+str(os.sys.argv[2]) if len(os.sys.argv) > 3 else "docker",
+    'axo_bot_'+(str(os.sys.argv[2]) if len(os.sys.argv) > 3 else "docker"),
     api_id, 
     api_hash
 )
@@ -35,10 +35,10 @@ async def handler(event):
 async def get_messages(client):
     messages = await client.get_messages(axo_bot,limit=3)
     for mess in messages:
-        if (mess.message != "💵Claim"):
+        if (mess.sender.username == axo_bot):
             return mess
         else:
-            print("recive own")
+            print("recive own mess(((")
     return None
 
 
@@ -93,7 +93,7 @@ async def main():
     while 1:
         try:
             if not isActive:
-                print("sleep no active")
+                print("no activated send \"!bot_a\" to activate")
                 await asyncio.sleep(5*60)
                 continue
             mess = await get_messages(client)
