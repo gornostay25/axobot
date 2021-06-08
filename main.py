@@ -11,6 +11,18 @@ client = TelegramClient('axo_bot_'+str(os.sys.argv[1]), api_id, api_hash)
 client.start()
 print("start app")
 
+
+async def get_messages(client):
+    messages = await client.get_messages(axo_bot,limit=3)
+    for mess in messages:
+        if (mess.message != "💵Claim"):
+            return mess
+        else:
+            print("recive own")
+    return mess[0]
+
+
+
 async def ocrible(mess,client):
     while 1:
         t = time.localtime()
@@ -41,8 +53,7 @@ async def ocrible(mess,client):
                 continue
         await client.send_message(axo_bot, re.findall(r'\d+',r)[0])
         time.sleep(2)
-        mess = await client.get_messages(axo_bot)
-        mess=mess[0]
+        mess = await get_messages(client)
         if mess.photo:
             continue
         else:
@@ -55,17 +66,15 @@ async def ocrible(mess,client):
 async def main():
     while 1:
         try:
-            mess = await client.get_messages(axo_bot)
-            mess= mess[0]
+            mess = await get_messages(client)
             print("- if")
             if not re.match(r'captcha',mess.message):
                 print("- asq captcha")
                 await client.send_message(axo_bot, '💵Claim')
-                time.sleep(2)
-                mess = await client.get_messages(axo_bot)
-                mess=mess[0]
+                time.sleep(5)
+                mess = await get_messages(client)
                 print("-"*30)
-                print(mess.message)
+                print(mess.message.encode('ascii',"ignore").decode())
                 print("-"*30)
                 if mess.photo:
                     print("- yes captcha")
@@ -78,14 +87,14 @@ async def main():
             elif (mess.photo):
                 print("- yes captcha")
                 print("-"*30)
-                print(mess.message)
+                print(mess.message.encode('ascii',"ignore").decode())
                 print("-"*30)
                 print("go ocr")
                 await ocrible(mess,client)
             else:
                 print("- wtf?")
                 print("-"*30)
-                print(mess.message)
+                print(mess.message.encode('ascii',"ignore").decode())
                 print("-"*30)
         except KeyboardInterrupt:
             print("exit")
