@@ -87,8 +87,8 @@
         ws.onmessage = e=>{
             data = JSON.parse(e.data)
             if (data.name = "instance terminal out" && data.args[1]){
-                    //consl.value+=data.args[1].replace(/[^\x00-\x7F]/g, "");
-                    //consl.scrollTop = consl.scrollHeight;
+                    consl.value+=data.args[1].replace(/[^\x00-\x7F]/g, "");
+                    consl.scrollTop = consl.scrollHeight;
                 
             }
         }
