@@ -14,7 +14,7 @@ client = TelegramClient(
 )
 print(ocr_api)
 client.start()
-print("start app")
+print("start app "+"axo_bot_"+(str(os.sys.argv[2]) if len(os.sys.argv) > 3 else "docker"))
 
 @client.on(events.NewMessage(outgoing=True, pattern='!bot_(s|a|d)'))
 async def handler(event):
