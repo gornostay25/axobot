@@ -57,7 +57,7 @@ async def main():
         try:
             mess = await client.get_messages(axo_bot)
             mess= mess[0]
-            if not re.match(r'Enter the captcha',mess.message):
+            if not re.match(r'captcha',mess.message):
                 await client.send_message(axo_bot, '💵Claim')
                 time.sleep(2)
                 mess = await client.get_messages(axo_bot)
@@ -72,6 +72,10 @@ async def main():
             elif (mess.photo):
                 print("go ocr")
                 await ocrible(mess,client)
+            else:
+                print("-"*30)
+                print(mess.message)
+                print("-"*30)
         except KeyboardInterrupt:
             print("exit")
             exit()
