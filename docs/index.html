@@ -13,35 +13,51 @@
         <br>
         <label for="session">Session file</label>
         <br>
-        <input type="file" id="session">
+        <input type="file" id="session"><input type="button" value="Stop&Export" id="export" disabled>
         <br><br>
-        <input type="submit" value="Run axoBot"> <input type="button" value="disconect" id="disc" disabled>
+        <input type="submit" value="Connect"> <input type="button" value="Start" id="start" disabled> <input type="button" value="disconect" id="disc" disabled>
     </form>
     <hr>
     <textarea id="console" style="width:100%;height:200px"></textarea>
 </body>
 <script>
-    let ws,url,f,fr
+    let ws,url,f,fr,expfileD=false,expfile
     document.querySelector("form").addEventListener("submit",e=>{
         e.preventDefault()
         url = new URL(e.target[0].value)
         ocrapi=e.target[1].value
-        // fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://labs.play-with-docker.com/sessions/'+e.target[0].value)}`)
-        //             .then(response => {
-        //               if (response.ok) return response.json()
-        //               throw new Error('Network response was not ok.')
-        //             })
-        //             .then(data => console.log(data.contents));
+
         if (e.target[2].files){
             f = e.target[2].files[0]
+            f?localStorage.setItem("file",f.name):0
             fr = new FileReader()
         }
 
         ws = new WebSocket(`wss://labs.play-with-docker.com/sessions/${url.pathname.substr(3)}/ws/`)
         const consl = document.getElementById("console"),
-        disc = document.getElementById("disc")
+        disc = document.getElementById("disc"),
+        start = document.getElementById("start"),
+        exprt = document.getElementById("export")
+
+        exprt.addEventListener("click",e=>{
+            fname = localStorage.getItem("file") || "axo_bot_docker.session"
+            sendDat("\u0003\n\u0003\necho -e \"HTTP/1.1 200 OK\nContent-Disposition: attachment; filename=\""+fname+"\"\nConnection: Closed\r\n\" > HTTP && cat axo_bot_docker.session >>HTTP\ncat HTTP | nc -lp 80\n")
+            saveFile()
+        })
+
         ws.onopen = e=>{
+            start.removeAttribute("disabled")
             disc.removeAttribute("disabled")
+            exprt.removeAttribute("disabled")
+        }
+        function nextstep(){
+            setTimeout(e=>{
+                sendDat(`docker run -i --mount type=bind,source=/root/axo_bot_docker.session,target=/app/axo_bot_docker.session gornostay25/axobot \"${(ocrapi)?ocrapi:""}\"\n`)
+            },1000)
+            
+        }
+        start.addEventListener("click",installdocker)
+        function installdocker(){
             if(f){
                 fr.onload = e=>{
                     f = e.target.result.substr(37)
@@ -59,12 +75,10 @@
                 nextstep()
             }
         }
-        function nextstep(){
-            setTimeout(e=>{
-                sendDat(`docker run -i --mount type=bind,source=/root/axo_bot_docker.session,target=/app/axo_bot_docker.session gornostay25/axobot \"${(ocrapi)?ocrapi:""}\"\n`)
-            },1000)
-            
-        }
+
+        disc.addEventListener("click",e=>{
+            ws.close()
+        })
         ws.onclose = e=>{
             alert("finished")
             location.reload()
@@ -73,12 +87,22 @@
         ws.onmessage = e=>{
             data = JSON.parse(e.data)
             if (data.name = "instance terminal out" && data.args[1]){
-                consl.value+=data.args[1].replace(/[^\x00-\x7F]/g, "");
-                consl.scrollTop = consl.scrollHeight;
+                    //consl.value+=data.args[1].replace(/[^\x00-\x7F]/g, "");
+                    //consl.scrollTop = consl.scrollHeight;
+                
             }
         }
     })
 
+    function saveFile(){
+        fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://labs.play-with-docker.com/sessions/'+url.pathname.substr(3))}`)
+            .then(r=>r.json())
+            .then(da => {
+                d=JSON.parse(da.contents)
+                debugger
+                window.open("https://"+d.instances[Object.keys(d.instances)[0]].proxy_host+"-80.direct.labs.play-with-docker.com")
+            });
+    }
     function sendDat(text){
             ws.send(
                 JSON.stringify(
