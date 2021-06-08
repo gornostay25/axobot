@@ -59,7 +59,7 @@ async def main():
             mess= mess[0]
             print("- if")
             if not re.match(r'captcha',mess.message):
-                print("- not captcha")
+                print("- asq captcha")
                 await client.send_message(axo_bot, '💵Claim')
                 time.sleep(2)
                 mess = await client.get_messages(axo_bot)
@@ -68,10 +68,11 @@ async def main():
                 print(mess.message)
                 print("-"*30)
                 if mess.photo:
+                    print("- yes captcha")
                     print("go ocr")
                     await ocrible(mess,client)
                 else:
-                    print("no photo/sleep 3min")
+                    print("no photo!!!/sleep 3min")
                     time.sleep(3*60)
                 
             elif (mess.photo):
