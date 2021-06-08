@@ -4,10 +4,15 @@ axo_bot = "AXOClaimBot"
 api_id= 2376043
 api_hash= "e992d55690981f66c95ce87695434296"
 
-ocr_api = "0748b1c15b88957"
+ocr_api = str(os.sys.argv[1]) if len(os.sys.argv) > 2 else "0748b1c15b88957"
 
 
-client = TelegramClient('axo_bot_'+str(os.sys.argv[1]), api_id, api_hash)
+client = TelegramClient(
+    'axo_bot_'+str(os.sys.argv[2]) if len(os.sys.argv) > 3 else "docker",
+    api_id, 
+    api_hash
+)
+print(ocr_api)
 client.start()
 print("start app")
 
@@ -50,6 +55,7 @@ async def ocrible(mess,client):
                 await client.send_message(axo_bot, r.text)
                 print("error ocr")
                 os.remove(path)
+                time.sleep(2*60)
                 continue
         await client.send_message(axo_bot, re.findall(r'\d+',r)[0])
         time.sleep(2)
