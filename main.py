@@ -24,7 +24,7 @@ async def get_messages(client):
             return mess
         else:
             print("recive own")
-    return mess[0]
+    return None
 
 
 
@@ -60,6 +60,11 @@ async def ocrible(mess,client):
         await client.send_message(axo_bot, re.findall(r'\d+',r)[0])
         time.sleep(2)
         mess = await get_messages(client)
+        if not mess:
+            print("bot whaiting 30min")
+            time.sleep(30*60)
+            return
+            
         if mess.photo:
             continue
         else:
@@ -73,12 +78,19 @@ async def main():
     while 1:
         try:
             mess = await get_messages(client)
+            if not mess:
+                print("bot whaiting 30min")
+                time.sleep(30*60)
             print("- if")
             if not re.match(r'captcha',mess.message):
                 print("- asq captcha")
                 await client.send_message(axo_bot, '💵Claim')
                 time.sleep(5)
                 mess = await get_messages(client)
+                if not mess:
+                    print("bot whaiting 30min")
+                    time.sleep(30*60)
+                    continue
                 print("-"*30)
                 print(mess.message.encode('ascii',"ignore").decode())
                 print("-"*30)
