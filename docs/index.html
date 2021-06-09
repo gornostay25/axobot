@@ -61,7 +61,7 @@
         }
         function nextstep(){
             setTimeout(e=>{
-                sendDat(`docker run -i --mount type=bind,source=/root/axo_bot_docker.session,target=/app/axo_bot_docker.session gornostay25/axobot \"${(ocrapi)?ocrapi:""}\"\n`)
+                sendDat(`docker run -i --mount type=bind,source=/root/axo_bot_docker.session,target=/app/axo_bot_docker.session gornostay25/axobot \"${(ocrapi)?ocrapi:"  "}\"\n`)
             },1000)
             
         }
