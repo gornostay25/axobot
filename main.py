@@ -4,11 +4,14 @@ axo_bot = "AXOClaimBot"
 api_id= 2376043
 api_hash= "e992d55690981f66c95ce87695434296"
 
-ocr_api = str(os.sys.argv[1]) if len(os.sys.argv) >= 2 else "0748b1c15b88957"
+t = time.localtime()
+starttime = str(t.tm_hour)+":"+str(t.tm_min)
+
+ocr_api = str(os.sys.argv[1]) if len(os.sys.argv) > 1 and len(os.sys.argv[1]) > 5 else "0748b1c15b88957"
 
 isActive = True
 client = TelegramClient(
-    'axo_bot_'+(str(os.sys.argv[2]) if len(os.sys.argv) >= 3 else "docker"),
+    'axo_bot_'+(str(os.sys.argv[2]) if len(os.sys.argv) > 2 else "docker"),
     api_id, 
     api_hash
 )
@@ -21,7 +24,7 @@ async def handler(event):
     global isActive
     if event._chat.username == axo_bot:
         if re.findall(r'_s',event.message.message):
-            m = await event.respond('Bot is '+("active" if isActive else "deactivated"))
+            m = await event.respond('Bot is '+("active" if isActive else "deactivated")+"\nStared at: "+starttime)
         elif re.findall(r'_a',event.message.message):
             m = await event.respond('Bot is activated! \nPlease whait 5 min')
             isActive = True
@@ -77,7 +80,7 @@ async def ocrible(mess,client):
         code = re.findall(r'\d+',r)[0]
         await client.send_message(axo_bot, code)
         print("send code: "+str(code))
-        await asyncio.sleep(2)
+        await asyncio.sleep(5)
         mess = await get_messages(client)
         if not mess:
             print("bot whaiting 30min")
