@@ -42,7 +42,7 @@ async def handler(event):
 
 
 async def get_messages(client):
-    messsages = await client.get_messages(axo_bot)
+    messsages = await client.get_messages(axo_bot,limit=3)
     for mess in messsages:
         if (mess.sender.username == axo_bot):
             return mess
