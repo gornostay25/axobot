@@ -6,7 +6,7 @@ api_hash= "e992d55690981f66c95ce87695434296"
 
 ocr_api = str(os.sys.argv[1]) if len(os.sys.argv) > 2 else "0748b1c15b88957"
 
-isActive = False
+isActive = True
 client = TelegramClient(
     'axo_bot_'+(str(os.sys.argv[2]) if len(os.sys.argv) > 3 else "docker"),
     api_id, 
