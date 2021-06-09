@@ -23,7 +23,7 @@ print("start app "+client.session.filename)
 async def handler(event):
     global isActive
     if event._chat.username == axo_bot:
-        if re.findall(r'_s',event.message.message):
+        if re.findall(r'_s$',event.message.message):
             m = await event.respond('Bot is '+("active" if isActive else "deactivated")+"\nStared at: "+starttime)
         elif re.findall(r'_a',event.message.message):
             m = await event.respond('Bot is activated! \nPlease whait 5 min')
@@ -34,7 +34,7 @@ async def handler(event):
             isActive = False
             print('Bot is deactivated! \nPlease whait 5 min')
         elif re.findall(r'_save',event.message.message):
-            client.send_file("me",client.session.filename)
+            await client.send_file("me",client.session.filename)
             await client.delete_messages(event.chat_id, [event.id])
             return
         await asyncio.sleep(5)
@@ -42,13 +42,13 @@ async def handler(event):
 
 
 async def get_messages(client):
-    messages = await client.get_messages(axo_bot,limit=3)
-    for mess in messages:
+    while 1:
+        mess = await client.get_messages(axo_bot)
+        mess= mess[0]
         if (mess.sender.username == axo_bot):
             return mess
         else:
-            print("recive own mess(((")
-    return None
+            await asyncio.sleep(60)
 
 
 
@@ -76,7 +76,7 @@ async def ocrible(mess,client):
             try:
                 r = r.json()['ParsedResults'][0]['TextOverlay']['Lines'][0]['LineText']
             except:
-                await client.send_message(axo_bot, r.text)
+                await client.send_message("me", r.text)
                 print("error ocr")
                 os.remove(path)
                 await asyncio.sleep(2*60)
@@ -86,12 +86,13 @@ async def ocrible(mess,client):
         print("send code: "+str(code))
         await asyncio.sleep(5)
         mess = await get_messages(client)
-        if not mess:
-            print("bot whaiting 30min")
-            await asyncio.sleep(30*60)
-            return None
+        # if not mess:
+        #     print("bot whaiting 30min")
+        #     await asyncio.sleep(30*60)
+        #     return None
             
         if mess.photo:
+            await asyncio.sleep(10)
             continue
         else:
             print("+ 1$")
@@ -108,19 +109,19 @@ async def main():
                 await asyncio.sleep(5*60)
                 continue
             mess = await get_messages(client)
-            if not mess:
-                print("bot whaiting 30min")
-                await asyncio.sleep(30*60)
+            # if not mess:
+            #     print("bot whaiting 30min")
+            #     await asyncio.sleep(30*60)
             print("- if")
             if not re.match(r'captcha',mess.message):
                 print("- asq captcha")
                 await client.send_message(axo_bot, '💵Claim')
                 await asyncio.sleep(5)
                 mess = await get_messages(client)
-                if not mess:
-                    print("bot whaiting 30min")
-                    await asyncio.sleep(30*60)
-                    continue
+                # if not mess:
+                #     print("bot whaiting 30min")
+                #     await asyncio.sleep(30*60)
+                #     continue
                 print("-"*30)
                 print(mess.message.encode('ascii',"ignore").decode())
                 print("-"*30)
