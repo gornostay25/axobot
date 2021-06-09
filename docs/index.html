@@ -19,13 +19,22 @@
     </form>
     <hr>
     <textarea id="console" style="width:100%;height:200px"></textarea>
+    <hr>
+    <input type="text" autocomplete="off" id="sendcom"> <button id="sendcomb">execute</button><button onclick="sendDat('\u0003\n')">CTRL+C</button>
 </body>
 <script>
+    form = document.querySelector("form")
+    form[0].value=localStorage.getItem("url")||""
+    form[1].value=localStorage.getItem("ocrapi")||""
+    
+
     let ws,url,f,fr,expfileD=false,expfile
     document.querySelector("form").addEventListener("submit",e=>{
         e.preventDefault()
         url = new URL(e.target[0].value)
         ocrapi=e.target[1].value
+        localStorage.setItem("url",e.target[0].value)
+        ocrapi?localStorage.setItem("ocrapi",ocrapi):0
 
         if (e.target[2].files){
             f = e.target[2].files[0]
@@ -86,7 +95,7 @@
         ws.onerror = alert
         ws.onmessage = e=>{
             data = JSON.parse(e.data)
-            if (data.name = "instance terminal out" && data.args[1]){
+            if (data.name = "instance terminal out" && data.args[0]==url.hash.substr(1)&&data.args[1]){
                     consl.value+=data.args[1].replace(/[^\x00-\x7F]/g, "");
                     consl.scrollTop = consl.scrollHeight;
                 
@@ -116,5 +125,9 @@
                 )
             )
     }
+
+    document.getElementById("sendcomb").addEventListener("click",e=>{
+        sendDat(document.getElementById("sendcom").value+"\n")
+    })
 </script>
 </html>
