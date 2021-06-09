@@ -74,7 +74,9 @@ async def ocrible(mess,client):
                 os.remove(path)
                 await asyncio.sleep(2*60)
                 continue
-        await client.send_message(axo_bot, re.findall(r'\d+',r)[0])
+        code = re.findall(r'\d+',r)[0]
+        await client.send_message(axo_bot, code)
+        print("send code: "+str(code))
         await asyncio.sleep(2)
         mess = await get_messages(client)
         if not mess:
@@ -137,6 +139,8 @@ async def main():
                 print("-"*30)
         except KeyboardInterrupt:
             print("exit")
+            print("-"*30)
+            print("Dont forget to save a session!!!\naxo_bot_"+(str(os.sys.argv[2]) if len(os.sys.argv) > 3 else "docker")+".session")
             exit()
 
 client.loop.run_until_complete(main())
