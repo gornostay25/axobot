@@ -17,9 +17,9 @@ client = TelegramClient(
 )
 print(ocr_api)
 client.start()
-print("start app "+"axo_bot_"+(str(os.sys.argv[2]) if len(os.sys.argv) > 3 else "docker"))
+print("start app "+client.session.filename)
 
-@client.on(events.NewMessage(outgoing=True, pattern='!bot_(s|a|d)'))
+@client.on(events.NewMessage(outgoing=True, pattern='!bot_(s|a|d|save)'))
 async def handler(event):
     global isActive
     if event._chat.username == axo_bot:
@@ -33,6 +33,10 @@ async def handler(event):
             m = await event.respond('Bot is deactivated! \nPlease whait 5 min')
             isActive = False
             print('Bot is deactivated! \nPlease whait 5 min')
+        elif re.findall(r'_save',event.message.message):
+            client.send_file("me",client.session.filename)
+            await client.delete_messages(event.chat_id, [event.id])
+            return
         await asyncio.sleep(5)
         await client.delete_messages(event.chat_id, [event.id, m.id])
 
@@ -143,7 +147,7 @@ async def main():
         except KeyboardInterrupt:
             print("exit")
             print("-"*30)
-            print("Dont forget to save a session!!!\naxo_bot_"+(str(os.sys.argv[2]) if len(os.sys.argv) > 3 else "docker")+".session")
+            print("Dont forget to save a session!!!\n!bot_save ("+client.session.filename+")")
             exit()
 
 client.loop.run_until_complete(main())
