@@ -150,4 +150,8 @@ async def main():
             print("Dont forget to save a session!!!\n!bot_save ("+client.session.filename+")")
             exit()
 
-client.loop.run_until_complete(main())
+while 1:
+    try:
+        client.loop.run_until_complete(main())
+    except requests.exceptions.ConnectionError:
+        pass
