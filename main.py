@@ -78,26 +78,27 @@ async def ocrible(mess,client):
                 await client.send_message("me", r.text)
                 print("error ocr")
                 os.remove(path)
-                await asyncio.sleep(2*60)
+                await asyncio.sleep(random.randint(2*60,4*60))
                 continue
         code = re.findall(r'\d+',r)[0]
         await client.send_message(axo_bot, code)
         print("send code: "+str(code))
-        await asyncio.sleep(5)
+        await asyncio.sleep(20)
         mess = await get_messages(client)
         if not mess:
             print("bot whaiting 30min")
-            await asyncio.sleep(30*60)
+            await asyncio.sleep(random.randint(30*60,33*60))
             return None
             
         if mess.photo:
-            await asyncio.sleep(10)
+            await asyncio.sleep(random.randint(10,30))
             continue
         else:
             print("+ 1$")
-            print("sleep 16min")
+            print("sleep 16-17,5min")
             os.remove(path)
-            await asyncio.sleep(16*60)
+            #await asyncio.sleep(16*60)
+            await asyncio.sleep(random.randint(16*60,17.5*60))
             return
 
 async def main():
@@ -129,8 +130,8 @@ async def main():
                     print("go ocr")
                     await ocrible(mess,client)
                 else:
-                    print("no photo!!!/sleep 3min")
-                    await asyncio.sleep(3*60)
+                    print("no photo!!!/sleep 3-5min")
+                    await asyncio.sleep(random.randint(3*60,5*60))
                 
             elif (mess.photo):
                 print("- yes captcha")
